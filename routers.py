@@ -9,6 +9,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
+# ===============================================================================
+#               Models
+# ===============================================================================
 class Song(db.Model):
     __tablename__ = 'songs'  # table name will default to name of the model
 
@@ -85,28 +88,59 @@ class Audiobook(db.Model):
         return f'{self.title_of_the_audiobook} ({self.duration}) by {self.author_of_title} uploaded at {self.uploaded_time}'
 
 
+# ===============================================================================
+#               API ROUTES
+# ===============================================================================
 @app.route('/<audiofiletype>/', methods=['GET'])
-def get_all_data(audiofiletype):
+def get_all_audio_data(audiofiletype):
     if audiofiletype.lower() == AudioType.SONG.value:
-        return song_model_data()
+        return get_song_data()
     elif audiofiletype.lower() == AudioType.PODCAST.value:
-        return podcast_model_data()
+        return get_podcast_data()
     elif audiofiletype.lower() == AudioType.AUDIOBOOK.value:
-        return audiobook_model_data()
+        return get_audiobook_data()
     else:
         return make_response(jsonify({"error": "audio file type invalid"}), 500)
 
 
 @app.route('/<audiofiletype>/<audiofileid>/', methods=['GET'])
-def get_audio_data(audiofiletype, audiofileid):
+def get_audio_data_by_id(audiofiletype, audiofileid):
     if audiofiletype.lower() == AudioType.SONG.value:
-        return song_model_data_by_id(audiofileid)
+        return get_song_data_by_id(audiofileid)
     elif audiofiletype.lower() == AudioType.PODCAST.value:
-        return podcast_model_data_by_id(audiofileid)
+        return get_podcast_data_by_id(audiofileid)
     elif audiofiletype.lower() == AudioType.AUDIOBOOK.value:
-        return audiobook_model_data_by_id(audiofileid)
+        return get_audiobook_data_by_id(audiofileid)
     else:
-        # raise TypeError("invalid Type " + str(audiofiletype) + " must be of AudioType: song, podcast, or audiobook")
+        return make_response(jsonify({"error": "audio file type invalid"}), 500)
+
+
+@app.route('/<audiofiletype>/<audiofileid>/', methods=['DELETE'])
+def delete_audio_data(audiofiletype, audiofileid):
+    if audiofiletype.lower() == AudioType.SONG.value:
+        return delete_song_data_by_id(audiofileid)
+    elif audiofiletype.lower() == AudioType.PODCAST.value:
+        return delete_podcast_data_by_id(audiofileid)
+    elif audiofiletype.lower() == AudioType.AUDIOBOOK.value:
+        return delete_audiobook_data_by_id(audiofileid)
+    else:
+        return make_response(jsonify({"error": "audio file type invalid"}), 500)
+
+
+@app.route('/', methods=['POST'])
+def post_audio_data():
+    pass
+
+
+@app.route('/<audiofiletype>/<audiofileid>/', methods=['PUT'])
+def update_audio_data(audiofiletype, audiofileid):
+    if audiofiletype.lower() == AudioType.SONG.value:
+        return put_song_data(audiofileid)
+    elif audiofiletype.lower() == AudioType.PODCAST.value:
+        return put_podcast_data(audiofileid)
+    elif audiofiletype.lower() == AudioType.AUDIOBOOK.value:
+        return put_audiobook_data(audiofileid)
+    else:
         return make_response(jsonify({"error": "audio file type invalid"}), 500)
 
 
