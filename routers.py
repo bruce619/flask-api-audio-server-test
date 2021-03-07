@@ -133,11 +133,12 @@ def delete_audio_data(audioFileType, audioFileId):
 @app.route('/', methods=['POST'])
 def post_audio_data():
     data = request.get_json()
-    if data.get("audioFileType") == AudioType.SONG.value:
+    file_type = data.get("audioFileType")
+    if file_type == AudioType.SONG.value:
         return post_song_data(data)
-    elif data.get("audioFileType") == AudioType.PODCAST.value:
+    elif file_type == AudioType.PODCAST.value:
         return post_podcast_data(data)
-    elif data.get("audioFileType") == AudioType.PODCAST.value:
+    elif file_type == AudioType.PODCAST.value:
         return post_audiobook_data(data)
     return make_response(jsonify({"error": "audio file type invalid"}), 500)
 
