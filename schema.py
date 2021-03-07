@@ -1,4 +1,4 @@
-from models import Song, Podcast, Audiobook, db
+from routers import Song, Podcast, Audiobook, db
 from marshmallow import fields, validate
 from marshmallow_sqlalchemy import ModelSchema
 import datetime
