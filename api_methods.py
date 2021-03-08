@@ -145,6 +145,7 @@ def put_song_data(audioFileId, data):
         return make_response(jsonify({"error": "song id does not exist"}), 404)
     get_song.name_of_song = data['audioFileMetaData']['name_of_song']
     get_song.duration = data['audioFileMetaData']['duration']
+    get_song.uploaded_time = datetime.datetime.now()
     db.session.add(get_song)
     db.session.commit()
     song_schema = SongSchema(only=['id', 'name_of_song', 'duration', 'uploaded_time'])
@@ -161,6 +162,7 @@ def put_podcast_data(audioFileId, data):
     get_podcast.duration = data['audioFileMetaData']['duration']
     get_podcast.host = data['audioFileMetaData']['host']
     get_podcast.participants = data['audioFileMetaData']['participants']
+    get_podcast.uploaded_time = datetime.datetime.now()
     db.session.add(get_podcast)
     db.session.commit()
     podcast_schema = PodcastSchema(only=['id', 'name_of_the_podcast', 'duration', 'host', 'participants, uploaded_time'])
@@ -177,9 +179,10 @@ def put_audiobook_data(audioFileId, data):
     get_audiobook.author_of_title = data['audioFileMetaData']['author_of_title']
     get_audiobook.narrator = data['audioFileMetaData']["narrator"]
     get_audiobook.duration = data['audioFileMetaData']['duration']
+    get_audiobook.uploaded_time = datetime.datetime.now()
     db.session.add(get_audiobook)
     db.session.commit()
-    audio_book_schema = AudiobookSchema(only=['id', 'title_of_the_audiobook', 'author_of_title', 'narrator', 'duration uploaded_time'])
+    audio_book_schema = AudiobookSchema(only=['id', 'title_of_the_audiobook', 'author_of_title', 'narrator', 'duration', 'uploaded_time'])
     audio_book = audio_book_schema.dump(get_audiobook)
     return make_response(jsonify({"audioFileMetaData": audio_book}), 200)
 
