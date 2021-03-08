@@ -1,7 +1,7 @@
 from flask import jsonify, make_response
-from app import db
-from schema import AudiobookSchema
-from models import Audiobook
+from app_config.app import db
+from api_models.schema import AudiobookSchema
+from api_models.models import Audiobook
 import datetime
 
 # =========================================================================================

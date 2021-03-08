@@ -1,7 +1,7 @@
 from flask import jsonify, make_response
-from app import db
-from schema import PodcastSchema
-from models import Podcast
+from app_config.app import db
+from api_models.schema import PodcastSchema
+from api_models.models import Podcast
 import datetime
 
 

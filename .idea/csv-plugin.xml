@@ -3,6 +3,13 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="C:\Users\user\Documents\SoftwareEngineering\Python\FlaskPythonProject\README.md">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="C:\Users\user\Documents\SoftwareEngineering\Python\FlaskPythonProject\__init__.py">
           <value>
             <Attribute>

@@ -1,4 +1,4 @@
-from app import db
+from app_config.app import db
 import datetime
 
 

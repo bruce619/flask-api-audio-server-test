@@ -1,4 +1,4 @@
-from app import app
+from app_config.app import app
 from song_api_methods import get_song_data, get_song_data_by_id, delete_song_data_by_id, post_song_data, put_song_data
 from podcast_api_methods import get_podcast_data, get_podcast_data_by_id, delete_podcast_data_by_id, post_podcast_data, put_podcast_data
 from audiobook_api_methods import get_audiobook_data, get_audiobook_data_by_id, delete_audiobook_data_by_id, post_audiobook_data, put_audiobook_data
@@ -10,7 +10,7 @@ from flask import jsonify, make_response
 # ===============================================================================
 #               API ROUTES
 # ===============================================================================
-@app.route('/<audioFileType>/', methods=['GET'])
+@app.route('/<audioFileType>', methods=['GET'])
 def get_all_audio_data(audioFileType):
     if audioFileType.lower() == AudioType.SONG.value:
         return get_song_data()
@@ -22,7 +22,7 @@ def get_all_audio_data(audioFileType):
         return make_response(jsonify({"error": "audio file type invalid"}), 500)
 
 
-@app.route('/<audioFileType>/<audioFileId>/', methods=['GET'])
+@app.route('/<audioFileType>/<audioFileId>', methods=['GET'])
 def get_audio_data_by_id(audioFileType, audioFileId):
     if audioFileType.lower() == AudioType.SONG.value:
         return get_song_data_by_id(audioFileId)
@@ -34,7 +34,7 @@ def get_audio_data_by_id(audioFileType, audioFileId):
         return make_response(jsonify({"error": "audio file type invalid"}), 500)
 
 
-@app.route('/<audioFileType>/<audioFileId>/', methods=['DELETE'])
+@app.route('/<audioFileType>/<audioFileId>', methods=['DELETE'])
 def delete_audio_data(audioFileType, audioFileId):
     if audioFileType.lower() == AudioType.SONG.value:
         return delete_song_data_by_id(audioFileId)
@@ -60,7 +60,7 @@ def post_audio_data():
     return make_response(jsonify({"error": "audio file type invalid"}), 500)
 
 
-@app.route('/<audioFileType>/<audioFileId>/', methods=['PUT'])
+@app.route('/<audioFileType>/<audioFileId>', methods=['PUT'])
 def update_audio_data(audioFileType, audioFileId):
     data = request.get_json()
     if audioFileType.lower() == AudioType.SONG.value:
@@ -76,7 +76,7 @@ def update_audio_data(audioFileType, audioFileId):
 if __name__ == '__main__':
     app.run(debug=True)
 
-# in the project directory, run python routers.py in terminal/cmd
+# in the project directory, run python api.py in terminal/cmd
 
 
 
