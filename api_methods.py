@@ -26,6 +26,7 @@ def get_song_data_by_id(audioFileId):
     songs = song_schema.dump(song_id)
     return make_response(jsonify({"songs": songs}), 200)
 
+
 # Get audio file type podcast
 def get_podcast_data():
     podcast_data = Podcast.query.all()
@@ -41,6 +42,7 @@ def get_podcast_data_by_id(audioFileId):
     podcast_schema = PodcastSchema()
     podcasts = podcast_schema.dump(podcast_id)
     return make_response(jsonify({"podcasts": podcasts}), 200)
+
 
 # Get audio file type audiobook
 def get_audiobook_data():
@@ -141,13 +143,11 @@ def put_song_data(audioFileId, data):
     get_song = Song.query.get(audioFileId)
     if get_song is None:
         return make_response(jsonify({"error": "song id does not exist"}), 404)
-    if data.get('name_of_song'):
-        get_song.name_of_song = data['name_of_song']
-    if data.get('duration'):
-        get_song.duration = data['duration']
+    get_song.name_of_song = data['audioFileMetaData']['name_of_song']
+    get_song.duration = data['audioFileMetaData']['duration']
     db.session.add(get_song)
     db.session.commit()
-    song_schema = SongSchema(only=['id', 'name_of_song', 'duration'])
+    song_schema = SongSchema(only=['id', 'name_of_song', 'duration', 'uploaded_time'])
     song = song_schema.dump(get_song)
     return make_response(jsonify({"audioFileMetaData": song}), 200)
 
@@ -157,17 +157,13 @@ def put_podcast_data(audioFileId, data):
     get_podcast = Podcast.query.get(audioFileId)
     if get_podcast is None:
         return make_response(jsonify({"error": "podcast id does not exist"}), 404)
-    if data.get('name_of_the_podcast'):
-        get_podcast.name_of_the_podcast = data['name_of_the_podcast']
-    if data.get('duration'):
-        get_podcast.duration = data['duration']
-    if data.get('host'):
-        get_podcast.host = data['host']
-    if data.get('participants'):
-        get_podcast.participants = data['participants']
+    get_podcast.name_of_the_podcast = data['audioFileMetaData']['name_of_the_podcast']
+    get_podcast.duration = data['audioFileMetaData']['duration']
+    get_podcast.host = data['audioFileMetaData']['host']
+    get_podcast.participants = data['audioFileMetaData']['participants']
     db.session.add(get_podcast)
     db.session.commit()
-    podcast_schema = PodcastSchema(only=['id', 'name_of_the_podcast', 'duration', 'host', 'participants'])
+    podcast_schema = PodcastSchema(only=['id', 'name_of_the_podcast', 'duration', 'host', 'participants, uploaded_time'])
     podcast = podcast_schema.dump(get_podcast)
     return make_response(jsonify({"audioFileMetaData": podcast}), 200)
 
@@ -177,17 +173,13 @@ def put_audiobook_data(audioFileId, data):
     get_audiobook = Audiobook.query.get(audioFileId)
     if get_audiobook is None:
         return make_response(jsonify({"error": "audiobook id does not exist"}), 404)
-    if data.get('title_of_the_audiobook'):
-        get_audiobook.title_of_the_audiobook = data['title_of_the_audiobook']
-    if data.get('author_of_title'):
-        get_audiobook.author_of_title = data['author_of_title']
-    if data.get('narrator'):
-        get_audiobook.narrator = data["narrator"]
-    if data.get('duration'):
-        get_audiobook.duration = data['duration']
+    get_audiobook.title_of_the_audiobook = data['audioFileMetaData']['title_of_the_audiobook']
+    get_audiobook.author_of_title = data['audioFileMetaData']['author_of_title']
+    get_audiobook.narrator = data['audioFileMetaData']["narrator"]
+    get_audiobook.duration = data['audioFileMetaData']['duration']
     db.session.add(get_audiobook)
     db.session.commit()
-    audio_book_schema = AudiobookSchema(only=['id', 'title_of_the_audiobook', 'author_of_title', 'narrator', 'duration'])
+    audio_book_schema = AudiobookSchema(only=['id', 'title_of_the_audiobook', 'author_of_title', 'narrator', 'duration uploaded_time'])
     audio_book = audio_book_schema.dump(get_audiobook)
     return make_response(jsonify({"audioFileMetaData": audio_book}), 200)
 
