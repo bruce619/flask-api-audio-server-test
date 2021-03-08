@@ -52,9 +52,9 @@ class Podcast(db.Model):
     def __init__(self, name_of_the_podcast, duration, uploaded_time, host, participants):
         self.name_of_the_podcast = name_of_the_podcast
         self.duration = duration
-        self.uploaded_time = datetime.datetime.now()
+        self.uploaded_time = uploaded_time
         self.host = host
-        self.participants = []
+        self.participants = participants
 
     def save_to_db(self):
         db.session.add(self)
@@ -80,7 +80,7 @@ class Audiobook(db.Model):
         self.author_of_title = author_of_title
         self.narrator = narrator
         self.duration = duration
-        self.uploaded_time = datetime.datetime.now()
+        self.uploaded_time = uploaded_time
 
     def save_to_db(self):
         db.session.add(self)

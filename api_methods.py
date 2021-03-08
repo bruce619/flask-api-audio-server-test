@@ -103,7 +103,7 @@ def delete_audiobook_data_by_id(audioFileId):
 # # post audio file type song data
 def post_song_data(data):
     new_song = Song(name_of_song=data['audioFileMetaData']['name_of_song'], duration=data['audioFileMetaData']['duration'], uploaded_time=datetime.datetime.now())
-    song_schema = SongSchema()
+    song_schema = SongSchema(many=True)
     db.session.add(new_song)
     db.session.commit()
     song = song_schema.dump(new_song)
@@ -112,9 +112,11 @@ def post_song_data(data):
 
 # post audio file type podcast data
 def post_podcast_data(data):
-    new_podcast = Podcast(name_of_the_podcast=data['audioFileMetaData']['name_of_the_podcast'], duration=data['audioFileMetaData']['duration'],
-                          uploaded_time=datetime.datetime.now(), host=data["host"], participants=data['participants'])
-    podcast_schema = PodcastSchema()
+    new_podcast = Podcast(name_of_the_podcast=data['audioFileMetaData']['name_of_the_podcast'],
+                          duration=data['audioFileMetaData']['duration'],
+                          uploaded_time=datetime.datetime.now(), host=data['audioFileMetaData']['host'],
+                          participants=data['audioFileMetaData']['participants'])
+    podcast_schema = PodcastSchema(many=True)
     db.session.add(new_podcast)
     db.session.commit()
     podcast = podcast_schema.dump(new_podcast)
@@ -127,10 +129,10 @@ def post_audiobook_data(data):
                               author_of_title=data['audioFileMetaData']['author_of_title'],
                               narrator=data['audioFileMetaData']['narrator'], duration=data['audioFileMetaData']['duration'],
                               uploaded_time=datetime.datetime.now())
-    podcast_schema = PodcastSchema()
+    audio_schema = AudiobookSchema(many=True)
     db.session.add(new_audiobook)
     db.session.commit()
-    audiobook = podcast_schema.dump(new_audiobook)
+    audiobook = audio_schema.dump(new_audiobook)
     return make_response(jsonify({'audioFileMetaData': audiobook}), 200)
 
 # =========================================================================================
