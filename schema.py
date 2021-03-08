@@ -30,7 +30,7 @@ class SongSchema(ModelSchema):
     id = fields.Number(dump_only=True)
     name_of_song = fields.String(required=True, validate=string_must_not_be_greater_than_100_characters)
     duration = fields.Integer(required=True, validate=number_must_be_positive)
-    uploaded_time = fields.DateTime(default=datetime.datetime.utcnow)
+    uploaded_time = fields.DateTime(default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
 
 class PodcastSchema(ModelSchema):
@@ -41,7 +41,7 @@ class PodcastSchema(ModelSchema):
     id = fields.Number(dump_only=True)
     name_of_the_podcast = fields.String(required=True, validate=string_must_not_be_greater_than_100_characters)
     duration = fields.Number(required=True, validate=number_must_be_positive)
-    uploaded_time = fields.DateTime(required=True, default=datetime.datetime.utcnow)
+    uploaded_time = fields.DateTime(required=True, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
     host = fields.String(required=True, validate=string_must_not_be_greater_than_100_characters)
     participants = fields.List(fields.String(validate=must_not_be_more_than_10_participants), required=False, validate=must_not_be_more_than_10_participants)
 
@@ -56,5 +56,5 @@ class AudiobookSchema(ModelSchema):
     author_of_title = fields.String(required=True, validate=must_not_be_more_than_10_participants)
     narrator = fields.String(required=True, validate=string_must_not_be_greater_than_100_characters)
     duration = fields.Integer(required=True, validate=number_must_be_positive)
-    uploaded_time = fields.DateTime(required=True, default=datetime.datetime.utcnow)
+    uploaded_time = fields.DateTime(required=True, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 

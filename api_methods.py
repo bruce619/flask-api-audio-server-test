@@ -1,6 +1,7 @@
-from flask import request, jsonify, make_response
+from flask import jsonify, make_response
 from schema import SongSchema, PodcastSchema, AudiobookSchema
 from routers import Song, Podcast, Audiobook, db
+import datetime
 
 
 # =========================================================================================
@@ -17,8 +18,8 @@ def get_song_data():
 
 
 # get audio file type song by id
-def get_song_data_by_id(audiofileid):
-    song_id = Song.query.get(audiofileid)
+def get_song_data_by_id(audioFileId):
+    song_id = Song.query.get(audioFileId)
     if song_id is None:
         return make_response(jsonify({"error": "song id does not exist"}), 404)
     song_schema = SongSchema()
@@ -33,8 +34,8 @@ def get_podcast_data():
     return make_response(jsonify({"podcasts": podcasts}), 200)
 
 
-def get_podcast_data_by_id(audiofileid):
-    podcast_id = Podcast.query.get(audiofileid)
+def get_podcast_data_by_id(audioFileId):
+    podcast_id = Podcast.query.get(audioFileId)
     if podcast_id is None:
         return make_response(jsonify({"error": "podcast id does not exist"}), 404)
     podcast_schema = PodcastSchema()
@@ -50,8 +51,8 @@ def get_audiobook_data():
 
 
 # Get audio file type audiobook by id
-def get_audiobook_data_by_id(audiofileid):
-    audiobook_id = Audiobook.query.get(audiofileid)
+def get_audiobook_data_by_id(audioFileId):
+    audiobook_id = Audiobook.query.get(audioFileId)
     if audiobook_id is None:
         return make_response(jsonify({"error": "audiobook id does not exist"}), 404)
     audiobook_schema = AudiobookSchema()
@@ -64,8 +65,8 @@ def get_audiobook_data_by_id(audiofileid):
 # =========================================================================================
 
 # delete audio file type song
-def delete_song_data_by_id(audiofileid):
-    song_id = Song.query.get(audiofileid)
+def delete_song_data_by_id(audioFileId):
+    song_id = Song.query.get(audioFileId)
     if song_id is None:
         return make_response(jsonify({"error": "song id does not exist"}), 404)
     db.session.delete(song_id)
@@ -74,8 +75,8 @@ def delete_song_data_by_id(audiofileid):
 
 
 # delete audio file type podcast
-def delete_podcast_data_by_id(audiofileid):
-    podcast_id = Podcast.query.get(audiofileid)
+def delete_podcast_data_by_id(audioFileId):
+    podcast_id = Podcast.query.get(audioFileId)
     if podcast_id is None:
         return make_response(jsonify({"error": "podcast id does not exist"}), 404)
     db.session.delete(podcast_id)
@@ -84,11 +85,11 @@ def delete_podcast_data_by_id(audiofileid):
 
 
 # delete audio file type audiobook
-def delete_audiobook_data_by_id(audiofileid):
-    audiobook_id = Audiobook.query.get(audiofileid)
+def delete_audiobook_data_by_id(audioFileId):
+    audiobook_id = Audiobook.query.get(audioFileId)
     if audiobook_id is None:
         return make_response(jsonify({"error": "audiobook id does not exist"}), 404)
-    db.session.delete(audiofileid)
+    db.session.delete(audioFileId)
     db.session.commit()
     return make_response(jsonify({"message": "audiobook file deleted"}), 200)
 
@@ -97,28 +98,38 @@ def delete_audiobook_data_by_id(audiofileid):
 # =========================================================================================
 
 
-# post audio file type song data
+# # post audio file type song data
 def post_song_data(data):
+    new_song = Song(name_of_song=data['audioFileMetaData']['name_of_song'], duration=data['audioFileMetaData']['duration'], uploaded_time=datetime.datetime.now())
     song_schema = SongSchema()
-    song = song_schema.load(data)
-    result = song_schema.dump(song.create())
-    return make_response(jsonify({"audioFileType": data.get("audioFileType"), "audioFileMetaData": result}), 200)
+    db.session.add(new_song)
+    db.session.commit()
+    song = song_schema.dump(new_song)
+    return make_response(jsonify({'audioFileMetaData': song}), 200)
 
 
 # post audio file type podcast data
 def post_podcast_data(data):
+    new_podcast = Podcast(name_of_the_podcast=data['audioFileMetaData']['name_of_the_podcast'], duration=data['audioFileMetaData']['duration'],
+                          uploaded_time=datetime.datetime.now(), host=data["host"], participants=data['participants'])
     podcast_schema = PodcastSchema()
-    podcast = podcast_schema.load(data)
-    result = podcast_schema.dump(podcast.create())
-    return make_response(jsonify({"audioFileType": data.get("audioFileType"), "audioFileMetaData": result}), 200)
+    db.session.add(new_podcast)
+    db.session.commit()
+    podcast = podcast_schema.dump(new_podcast)
+    return make_response(jsonify({'audioFileMetaData': podcast}), 200)
 
 
 # post audio file type audiobook
 def post_audiobook_data(data):
-    audiobook_schema = AudiobookSchema()
-    audiobook = audiobook_schema.load(data)
-    result = audiobook_schema.dump(audiobook.create())
-    return make_response(jsonify({"audioFileType": data.get("audioFileType"), "audioFileMetaData": result}), 200)
+    new_audiobook = Audiobook(title_of_the_audiobook=data['audioFileMetaData']['title_of_the_audiobook'],
+                              author_of_title=data['audioFileMetaData']['author_of_title'],
+                              narrator=data['audioFileMetaData']['narrator'], duration=data['audioFileMetaData']['duration'],
+                              uploaded_time=datetime.datetime.now())
+    podcast_schema = PodcastSchema()
+    db.session.add(new_audiobook)
+    db.session.commit()
+    audiobook = podcast_schema.dump(new_audiobook)
+    return make_response(jsonify({'audioFileMetaData': audiobook}), 200)
 
 # =========================================================================================
 #           PUT DATA
@@ -126,8 +137,8 @@ def post_audiobook_data(data):
 
 
 # update audio file type song by id
-def put_song_data(audiofileid, data):
-    get_song = Song.query.get(audiofileid)
+def put_song_data(audioFileId, data):
+    get_song = Song.query.get(audioFileId)
     if get_song is None:
         return make_response(jsonify({"error": "song id does not exist"}), 404)
     if data.get('name_of_song'):
@@ -138,12 +149,12 @@ def put_song_data(audiofileid, data):
     db.session.commit()
     song_schema = SongSchema(only=['id', 'name_of_song', 'duration'])
     song = song_schema.dump(get_song)
-    return make_response(jsonify({"audioFileType": data.get("audioFileType"), "audioFileMetaData": song}), 200)
+    return make_response(jsonify({"audioFileMetaData": song}), 200)
 
 
 # update audio file type podcast by id
-def put_podcast_data(audiofileid, data):
-    get_podcast = Podcast.query.get(audiofileid)
+def put_podcast_data(audioFileId, data):
+    get_podcast = Podcast.query.get(audioFileId)
     if get_podcast is None:
         return make_response(jsonify({"error": "podcast id does not exist"}), 404)
     if data.get('name_of_the_podcast'):
@@ -158,12 +169,12 @@ def put_podcast_data(audiofileid, data):
     db.session.commit()
     podcast_schema = PodcastSchema(only=['id', 'name_of_the_podcast', 'duration', 'host', 'participants'])
     podcast = podcast_schema.dump(get_podcast)
-    return make_response(jsonify({"audioFileType": data.get("audioFileType"), "audioFileMetaData": podcast}), 200)
+    return make_response(jsonify({"audioFileMetaData": podcast}), 200)
 
 
 # update audio file type podcast by id
-def put_audiobook_data(audiofileid, data):
-    get_audiobook = Audiobook.query.get(audiofileid)
+def put_audiobook_data(audioFileId, data):
+    get_audiobook = Audiobook.query.get(audioFileId)
     if get_audiobook is None:
         return make_response(jsonify({"error": "audiobook id does not exist"}), 404)
     if data.get('title_of_the_audiobook'):
@@ -178,6 +189,6 @@ def put_audiobook_data(audiofileid, data):
     db.session.commit()
     audio_book_schema = AudiobookSchema(only=['id', 'title_of_the_audiobook', 'author_of_title', 'narrator', 'duration'])
     audio_book = audio_book_schema.dump(get_audiobook)
-    return make_response(jsonify({"audioFileType": data.get("audioFileType"), "audioFileMetaData": audio_book}), 200)
+    return make_response(jsonify({"audioFileMetaData": audio_book}), 200)
 
 

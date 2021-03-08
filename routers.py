@@ -2,8 +2,8 @@ from flask import Flask
 from api_methods import *
 from enum_class import AudioType
 from flask_sqlalchemy import SQLAlchemy
-import datetime
 from flask import request
+import datetime
 
 
 app = Flask(__name__)
@@ -22,13 +22,13 @@ class Song(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name_of_song = db.Column(db.String(100), nullable=False)
     duration = db.Column(db.Integer, nullable=False)
-    uploaded_time = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
+    uploaded_time = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow,  onupdate=datetime.datetime.utcnow)
 
     # define what each instance or row in the DB will have (id is taken care of)
     def __init__(self, name_of_song, duration, uploaded_time):
         self.name_of_song = name_of_song
         self.duration = duration
-        self.uploaded_time = uploaded_time
+        self.uploaded_time = datetime.datetime.now()
 
     def save_to_db(self):
         db.session.add(self)
@@ -45,16 +45,16 @@ class Podcast(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name_of_the_podcast = db.Column(db.String(100), nullable=False)
     duration = db.Column(db.Integer, nullable=False)
-    uploaded_time = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
+    uploaded_time = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
     host = db.Column(db.String(100), nullable=False)
     participants = db.Column(db.ARRAY(db.String(100)), nullable=True)
 
     def __init__(self, name_of_the_podcast, duration, uploaded_time, host, participants):
         self.name_of_the_podcast = name_of_the_podcast
         self.duration = duration
-        self.uploaded_time = uploaded_time
+        self.uploaded_time = datetime.datetime.now()
         self.host = host
-        self.participants = participants
+        self.participants = []
 
     def save_to_db(self):
         db.session.add(self)
@@ -73,14 +73,14 @@ class Audiobook(db.Model):
     author_of_title = db.Column(db.String(100), nullable=False)
     narrator = db.Column(db.String(100), nullable=False)
     duration = db.Column(db.Integer, nullable=False)
-    uploaded_time = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
+    uploaded_time = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
     def __init__(self, title_of_the_audiobook, author_of_title, narrator, duration, uploaded_time):
         self.title_of_the_audiobook = title_of_the_audiobook
         self.author_of_title = author_of_title
         self.narrator = narrator
         self.duration = duration
-        self.uploaded_time = uploaded_time
+        self.uploaded_time = datetime.datetime.now()
 
     def save_to_db(self):
         db.session.add(self)
@@ -133,12 +133,13 @@ def delete_audio_data(audioFileType, audioFileId):
 @app.route('/', methods=['POST'])
 def post_audio_data():
     data = request.get_json()
-    file_type = data.get("audioFileType")
-    if file_type == AudioType.SONG.value:
+    if not data:
+        return make_response(jsonify({"message": "No input data provided"}), 400)
+    if data['audioFileType'] == AudioType.SONG.value:
         return post_song_data(data)
-    elif file_type == AudioType.PODCAST.value:
+    elif data['audioFileType'] == AudioType.PODCAST.value:
         return post_podcast_data(data)
-    elif file_type == AudioType.PODCAST.value:
+    elif data['audioFileType'] == AudioType.AUDIOBOOK.value:
         return post_audiobook_data(data)
     return make_response(jsonify({"error": "audio file type invalid"}), 500)
 
