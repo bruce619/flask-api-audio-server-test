@@ -1,6 +1,6 @@
 A REST Web API that simulates the behavior of an audio file server.
 
-Requirements: One of three audio files is allowed \
+Requirements: One of three audio files is allowed
 1. song
 2. podcast
 3. audiobook
