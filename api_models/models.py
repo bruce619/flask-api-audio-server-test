@@ -18,7 +18,7 @@ class Song(db.Model):
     def __init__(self, name_of_song, duration, uploaded_time):
         self.name_of_song = name_of_song
         self.duration = duration
-        self.uploaded_time = datetime.datetime.now()
+        self.uploaded_time = uploaded_time
 
     def save_to_db(self):
         db.session.add(self)
